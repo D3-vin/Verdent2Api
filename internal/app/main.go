@@ -319,10 +319,9 @@ func (s *Server) handleV1Models(w http.ResponseWriter, r *http.Request) {
 	now := time.Now().Unix()
 	models := modelCatalog()
 
-	// Both provider namings are always served: the native Verdent ids and
-	// their Anthropic (claude-*) aliases, so OpenAI-style and Anthropic-style
-	// clients both find their model without any mode flag (qoder2api way).
-	data := make([]map[string]interface{}, 0, len(models)*2)
+	// Pass-through: exactly what the service catalog serves, no alias
+	// mapping.
+	data := make([]map[string]interface{}, 0, len(models))
 	addModel := func(id, name string, m ModelInfo) {
 		entry := map[string]interface{}{
 			"id":              id,
@@ -352,9 +351,6 @@ func (s *Server) handleV1Models(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, m := range models {
 		addModel(m.ID, m.Name, m)
-		if alias := getClaudeName(m.ID); alias != m.ID {
-			addModel(alias, alias, m)
-		}
 	}
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"object": "list",
@@ -1005,7 +1001,7 @@ func printBanner() {
 	fmt.Println(yellow + "  📧 Telegram:" + reset + " https://t.me/D3_vin")
 	fmt.Println(magenta + "  👤 Author:" + reset + " @D3vin_dev")
 	fmt.Println(green + "  🔗 GitHub:" + reset + " https://github.com/D3-vin/VERDENT2API")
-	fmt.Println(cyan + "  📦 Version:" + reset + " 1.1.0")
+	fmt.Println(cyan + "  📦 Version:" + reset + " 1.0.1")
 	fmt.Println()
 }
 
