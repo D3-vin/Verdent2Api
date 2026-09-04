@@ -1,0 +1,29 @@
+# Environment / secrets
+.env
+
+# Binaries / build output
+*.exe
+*.exe~
+build/
+
+# Build scripts
+build.cmd
+build.sh
+
+# Tests
+*_test.go
+*.test
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Runtime data (accounts live here)
+config.json
+verdent_tokens.txt
+
+# Kiro (internal)
+.kiro/
