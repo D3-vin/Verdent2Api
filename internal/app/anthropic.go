@@ -102,60 +102,22 @@ func sanitizeAnthropicMessages(msgs []json.RawMessage) []json.RawMessage {
 	return out
 }
 
-func convertClaudeModelToGLM(claudeModel string) string {
-	cleanModel := strings.TrimSuffix(claudeModel, "[1m]")
-	if cleanModel != claudeModel {
-		log.Printf("[Anthropic] 1M variant: %s -> %s", claudeModel, cleanModel)
-	}
-	// Anthropic ID → Verdent free model.
-	reverseMap := map[string]string{
-		"claude-opus-4-8":         "glm-5.3-flash-free",
-		"claude-opus-4-7":         "glm-5.3-flash-free",
-		"claude-opus-4-6":         "glm-5.3-flash-free",
-		"claude-sonnet-4-6":       "deepseek-v4-flash-free",
-		"claude-3-5-haiku-latest": "deepseek-v4-flash-free",
-	}
-	if glm, ok := reverseMap[cleanModel]; ok {
-		return glm
-	}
-	if isKnownGLMModel(cleanModel) {
-		return cleanModel
-	}
-	log.Printf("[Anthropic] WARN: unknown model %q, fallback glm-5.3-flash-free", claudeModel)
-	return "glm-5.3-flash-free"
-}
-
-func isKnownGLMModel(id string) bool {
-	for _, m := range modelIDs() {
-		if strings.EqualFold(m, id) {
-			return true
-		}
-	}
-	return false
-}
-
-// getClaudeName maps a Verdent model → Anthropic ID for /v1/models
-// (inverse of convertClaudeModelToGLM).
-func getClaudeName(glmModel string) string {
-	var name string
-	switch glmModel {
-	case "glm-5.3-flash-free":
-		name = "claude-opus-4-8"
-	case "deepseek-v4-flash-free":
-		name = "claude-sonnet-4-6"
-	default:
-		name = glmModel
-	}
-	return name
-}
-
-// resolveGLMModel maps Claude model → Verdent model. CLI may send GLM ids directly.
+// resolveGLMModel resolves the requested model to a lineup id. No mapping
+// table: the catalog is passed through as the service serves it; anything
+// the lineup doesn't know falls back to the default model.
 func resolveGLMModel(model string) string {
 	clean := strings.TrimSuffix(model, "[1m]")
-	if isKnownGLMModel(clean) {
-		return clean
+	for _, id := range modelIDs() {
+		if strings.EqualFold(id, clean) {
+			return id
+		}
 	}
-	return convertClaudeModelToGLM(model)
+	def := modelIDs()
+	if len(def) > 0 {
+		log.Printf("[Anthropic] unknown model %q, fallback %s", model, def[0])
+		return def[0]
+	}
+	return "glm-5.3-flash-free"
 }
 
 // ponytail: Desktop sends 59 tools — cap keeps tool framing under ~15k chars.

@@ -44,21 +44,6 @@ var defaultVerdentModels = []ModelInfo{
 		ContextWindows: []ContextWindow{{"300K", 300000}, {"1M", 1000000}}},
 }
 
-// modelAliases map legacy/common client names to free-model IDs.
-var modelAliases = map[string]string{
-	"glm-5.3":       "glm-5.3-flash-free",
-	"glm-5.3.2":     "glm-5.3-flash-free",
-	"glm-5.2":       "glm-5.3-flash-free",
-	"glm-4.7":       "glm-5.3-flash-free",
-	"glm-5-turbo":   "glm-5.3-flash-free",
-	"glm-5.3-flash": "glm-5.3-flash-free",
-	"deepseek-v4":   "deepseek-v4-flash-free",
-	"deepseek-v3":   "deepseek-v4-flash-free",
-	"deepseek-chat": "deepseek-v4-flash-free",
-	"gpt-4o":        "glm-5.3-flash-free",
-	"gpt-4o-mini":   "glm-5.3-flash-free",
-}
-
 var (
 	modelsMu    sync.RWMutex
 	liveCatalog []ModelInfo // full upstream catalog (nil until fetched)
@@ -201,13 +186,6 @@ func resolveModelAlias(requested string) string {
 	for _, id := range lineupIDs {
 		if strings.EqualFold(id, req) {
 			return id
-		}
-	}
-	if alias, ok := modelAliases[req]; ok {
-		for _, id := range lineupIDs {
-			if strings.EqualFold(id, alias) {
-				return alias
-			}
 		}
 	}
 	return ""
