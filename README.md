@@ -227,4 +227,10 @@ verdent/
 
 ## License
 
-Provided as-is for educational and interoperability purposes. Use responsibly and in accordance with Verdent's terms of service.
+Provided as-is for educational and interoperability purposes — see [LICENSE](LICENSE).
+
+## ⚠️ Disclaimer
+
+This software is provided **for educational and interoperability purposes only**, "AS IS", without warranty of any kind. The author is not responsible for any misuse or consequences — responsibility lies entirely on the end user. Use in accordance with Verdent's Terms of Service. Not affiliated with Verdent.
+
+> ПО предоставляется исключительно в образовательных и ознакомительных целях, «как есть». Автор не несёт ответственности за использование.
